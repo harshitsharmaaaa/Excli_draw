@@ -1,8 +1,9 @@
 import express from "express";
 import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "@repo/backend-common/config";
-import { middleware } from "./middleware";
+// import {JWT_SECRET}  from "@repo/backend-common/config";
+import { middleware } from "./middleware.js";
 import { createuserSchema ,signinSchema,createRoomSchema} from "@repo/common/types";
+import {client} from "@repo/db/client";
 const app = express();
 
 app.get("/", (req, res) => {
@@ -13,14 +14,30 @@ app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
 
-app.post("/signup", (req, res) => {
+app.post("/signup", async(req, res) => {
 
   const data = createuserSchema.safeParse(req.body);
-  if (data.success) {
-    res.json({ userId: 1 });
-    return;
+  if(!data.success){
+      res.status(400).json({error:data.error});
+      return;
   }
-  res.status(400).json({ error: data.error });
+
+  try {
+    await client.user.create({
+      data:{
+        email:data.data?.username,
+        name:data.data?.name,
+        password:data.data?.password,
+      }
+  })
+  res.json({
+    userId:123,
+  })
+  } catch (error) {
+    res.status(400).json({
+      message:error,
+    });
+  }
 });
 
 

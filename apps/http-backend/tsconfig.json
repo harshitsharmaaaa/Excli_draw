@@ -3,6 +3,18 @@
   "extends":"@repo/typescript-config/base.json",
   "compilerOptions": {
     "rootDir":"./src",
-    "outDir":"./dist"
+    "outDir":"./dist",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ESNext",
+    "paths": {
+      // "@repo/backend-common/config": [
+      //   "../../packages/backend-common/src/index.ts"
+      // ],
+      //  "@repo/common/types": [
+      //   "../../packages/common/src/types.ts"
+      // ]
+
+    }
   }
 }
