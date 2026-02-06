@@ -83,7 +83,7 @@ wss.on("connection", (ws:WebSocket,req) => {
                 data:{
                     roomId:room,
                     message,
-                    userId:userID
+                    userId:userID,
                 }
             })
 
