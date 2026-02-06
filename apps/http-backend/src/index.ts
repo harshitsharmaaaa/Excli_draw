@@ -81,7 +81,7 @@ app.post("/room", middleware,async(req, res) => {
   
 
   try {
-    await Client.room.create({
+    const room = await Client.room.create({
       data:{
         slug:data.data?.name,
         adminId:userId,
@@ -89,7 +89,7 @@ app.post("/room", middleware,async(req, res) => {
     })
   
     res.json({
-      roomId: 123,
+      roomId: room.id,
       
     });
   } catch (error) {
@@ -101,17 +101,46 @@ app.post("/room", middleware,async(req, res) => {
 
 app.get("/chats/:roomId",async(req, res) => {
   const roomId = Number(req.params.roomId);
-  const message = Client.chat.findMany({
+  try {
+    const message = Client.chat.findMany({
+      where:{
+        roomId,
+        
+      },
+      orderBy:{
+        id:"desc",
+      },
+      take:50,
+    })
+  
+    res.json({message});
+  } catch (error) {
+    console.log(error);
+    res.json({
+      messages:[]
+    })
+    
+  }
+
+})
+
+
+
+app.get("/room/:slug",async(req, res) => {
+  const slug = req.params.slug;
+  if(!slug){
+      res.status(400).json({error:"room id is required"});
+      return;
+  }
+  const room = await Client.room.findFirst({
     where:{
-      roomId,
-      
-    },
-    orderBy:{
-      id:"desc",
-    },
-    take:50,
+      slug:slug,
+    }
+    
   })
 
-  res.json(message);
+  res.json({
+    room
+  });
 
 })
